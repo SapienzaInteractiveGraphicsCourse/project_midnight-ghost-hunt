@@ -4,7 +4,7 @@
 
 ## Play it!
 
-[TO BE IMPLEMENTED]
+https://sapienzainteractivegraphicscourse.github.io/project_midnight-ghost-hunt/
 
 ## Game overview
 
@@ -41,11 +41,6 @@ The game presents a settings menu for both difficulty (easy, medium and hard) an
 
 - **Normal Ghosts:** Get eliminated in 1 hit
 - **Wraiths:** Bosses that require 3 hits to kill and can regain 1 heart if they hit the player
-
-
-## Code structure
-
-[TO BE IMPLEMENTED]
 
 ## Credits
 
