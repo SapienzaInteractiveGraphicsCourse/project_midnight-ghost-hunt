@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MIDNIGHT GHOST HUNT</title>
+<link rel="icon" type="image/x-icon" href="./assets/favicon-ghost.ico" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Spectral:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./css/styles.css" />
+<link rel="stylesheet" href="./css/menu.css" />
+<link rel="stylesheet" href="./css/settings.css" />
+
+<script src="https://cdn.babylonjs.com/ammo.js"></script>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+    "tween": "https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@21.0.0/dist/tween.esm.js"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="scene"></canvas>
+  <div id="flash"></div>
+
+  <div id="crosshair" class="hidden"><span class="ch-cooldown"></span><span class="ch-ring"></span><span class="ch-dot"></span></div>
+
+  <div id="hud" class="hidden">
+    <div class="hud-corner hud-left">
+      <div class="readout"><span class="label">SOUL</span><div id="lives" class="hearts"></div></div>
+      <div class="readout"><span class="label">RAY CHARGE</span><div id="rays" class="charge"></div></div>
+    </div>
+    <div class="hud-corner hud-right">
+      <div class="readout right"><span class="label">SPECTRES</span><span id="ghostCount" class="big">0</span></div>
+      <button id="openSettings" title="Settings (P)" style="display: none;">Settings</button>
+    </div>
+    <div id="banner" class="banner"></div>
+    <div id="invincibleBar" class="invincible hidden"><span></span></div>
+  </div>
+
+  <div id="start" class="overlay">
+    <div class="app-bg">
+      <img class="bg-moon" src="./assets/pngs/moon_image.png" alt="" />
+      <img class="bg-fog" src="./assets/pngs/fog.png" alt="" />
+      <img class="bg-tomb-left" src="./assets/pngs/tomb.png" alt="" />
+      <img class="bg-tomb-right" src="./assets/pngs/tomb.png" alt="" />
+    </div>
+    <div class="panel hero">
+      <div class="hero-art" aria-hidden="true">
+        <img class="art-ghost" src="./assets/pngs/cartoon_ghost.png" alt="" />
+      </div>
+      <h1 class="title">
+        <span>MIDNIGHT</span>
+        <span>GHOST HUNT</span>
+      </h1>
+      <p class="subtitle">Hunt what should not linger.</p>
+      <div class="menu-actions">
+        <button id="beginBtn" class="cta">ENTER THE GROUNDS</button>
+        <div class="menu-row">
+          <button id="rulesBtn" class="ghost-btn">RULES</button>
+          <button id="gameplayBtn" class="ghost-btn">GAMEPLAY</button>
+          <button id="gfxBtn" class="ghost-btn">GRAPHICS</button>
+        </div>
+        <div class="setting row" style="margin-top:6px;justify-content:center;gap:14px">
+          <label style="margin:0">Pacific mode <small style="opacity:.6;margin-left: 5px;">(spirits won't harm you)</small></label>
+          <div class="seg" id="pacSeg">
+            <button data-pac="off" class="on">Off</button>
+            <button data-pac="on">On</button>
+          </div>
+        </div>
+      </div>
+      <p class="hint">Click grants pointer lock. Press <kbd>Esc</kbd> to release the mouse.</p>
+      <p class="credits">Author: Niccolò Buonfiglio</p>
+    </div>
+  </div>
+
+  <div id="rules" class="overlay hidden">
+    <div class="panel wide scroll">
+      <h2 class="head">THE HUNT</h2>
+      <p class="lead">You walk the graveyard with a ray-gun in hand. Lay every spectre to rest.</p>
+      <h3 class="sec">Objective</h3>
+      <p>Dissolve <strong>every spectre</strong> on the grounds to be <em>cleansed</em>. Lose all three soul fragments and you are <em>Consumed</em>.</p>
+      <h3 class="sec">Controls</h3>
+      <p><kbd>W A S D</kbd> move - <kbd>Mouse</kbd> look - <kbd>Click</kbd> fire the ray - <kbd>Esc</kbd> pause.</p>
+      <h3 class="sec">The Ray</h3>
+      <p>Each shot spends <strong>1 charge</strong> and launches a blast. Recharges are limited! Use your gun wisely.</p>
+      <button class="cta close-rules">UNDERSTOOD</button>
+    </div>
+  </div>
+
+  <div id="gameplay" class="overlay hidden">
+    <div class="panel">
+      <h2 class="head">GAMEPLAY</h2>
+      <p class="lead">Set the difficulty before you enter.</p>
+      <div class="setting"><label>Difficulty</label>
+        <div class="seg big-seg" id="diffSeg">
+          <button data-diff="easy">EASY<br><small>4 souls · 5 spectres + 1 wraith</small></button>
+          <button data-diff="normal" class="on">MEDIUM<br><small>3 souls · 8 spectres + 1 wraith</small></button>
+          <button data-diff="hard">HARD<br><small>2 souls · 11 spectres + 2 wraiths</small></button>
+        </div>
+      </div>
+      <button class="cta close-gameplay">DONE</button>
+    </div>
+  </div>
+
+  <div id="loading" class="overlay hidden">
+    <div class="panel slim"><div class="spinner"></div><p id="loadingText">Consecrating the grounds…</p></div>
+  </div>
+
+  <div id="pause" class="overlay hidden">
+    <div class="panel slim">
+      <h2>PAUSE</h2>
+      <p class="subtitle">The hunt is paused.</p>
+      <div class="menu-actions">
+        <button id="resumeBtn" class="cta">RESUME</button>
+        <div class="menu-row">
+          <button id="pauseSettingsBtn" class="ghost-btn">GRAPHICS</button>
+          <button id="quitBtn" class="ghost-btn danger">QUIT TO MENU</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameover" class="overlay hidden">
+    <div class="panel">
+      <h1 id="overTitle" class="title">CONSUMED</h1>
+      <p id="overText" class="subtitle"></p>
+      <div class="menu-actions">
+        <button id="restartBtn" class="cta">HUNT AGAIN</button>
+        <div class="menu-row"><button id="overQuitBtn" class="ghost-btn">MAIN MENU</button></div>
+      </div>
+    </div>
+  </div>
+
+  <aside id="settings" class="drawer hidden">
+    <header><h3>GRAPHICS</h3><button id="closeSettings">✕</button></header>
+    <div class="setting"><label>Quality</label>
+      <div class="seg" id="presetSeg">
+        <button data-preset="low">Low</button>
+        <button data-preset="medium" class="on">High</button>
+      </div>
+    </div>
+    <div class="setting row"><label>Developer mode <small style="opacity:.6">(hitboxes, axes, shadows)</small></label><input id="setDev" type="checkbox" /></div>
+    <p class="fps">FPS <span id="fps">–</span> · draw calls <span id="draws">–</span></p>
+  </aside>
+</div>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Spooky Tree Low Poly
+* source:	https://sketchfab.com/3d-models/spooky-tree-low-poly-88a926a9ff114820ba114707200a907d
+* author:	Hanna Antonova (https://sketchfab.com/hannaantonova)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Spooky Tree Low Poly" (https://sketchfab.com/3d-models/spooky-tree-low-poly-88a926a9ff114820ba114707200a907d) by Hanna Antonova (https://sketchfab.com/hannaantonova) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
